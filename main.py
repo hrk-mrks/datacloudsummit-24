@@ -17,7 +17,7 @@ st.caption('''
 時点データなので、実際のセッション時間等はリンク先を確認してください。説明文はダブルクリックで全文表示できます。
 ''')
 
-df = pd.read_csv(r'./data_cloud_summit.csv')
+df = pd.read_csv(r'./data/20240427_data_cloud_summit.csv')
 en_toggle = st.sidebar.toggle('English')
 
 if en_toggle:
