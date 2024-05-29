@@ -15,13 +15,13 @@ col1, col2 = st.columns([4,1])
 with col1:
     '### セッション検索アプリ❄️'
 with col2:
-    st.caption('データ更新日：2024年5月16日')
+    st.caption('データ更新日：2024年5月29日')
 st.caption('''
 セッションの日本語検索アプリ。  
 時点データなので、実際のセッション時間等はリンク先を確認してください。説明文はダブルクリックで全文表示できます。
 ''')
 
-df = pd.read_csv(r'./data/20240516_data_cloud_summit.csv')
+df = pd.read_csv(r'./data/20240529_data_cloud_summit.csv')
 en_toggle = st.sidebar.toggle('English')
 
 if en_toggle:
@@ -88,7 +88,8 @@ select_session_type = st.sidebar.selectbox(
 )
 input_search = st.sidebar.text_input(
     '検索',
-    placeholder='Like'
+    placeholder='Like',
+    help="日付を除く全カラムに対して検索できます。"
 )
 
 
