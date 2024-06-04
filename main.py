@@ -15,8 +15,10 @@ col1, col2 = st.columns([4,1])
 with col1:
     '### セッション検索アプリ❄️'
 with col2:
-    data_date = st.selectbox('データ更新時点',
-                 ['2024-05-29', '2024-05-16', '2024-04-27', '2024-04-22'])
+    data_date = '2024-06-04'
+    st.write(f'データ更新日：{data_date}')
+    # data_date = st.selectbox('データ更新時点',
+    #              ['2024-05-29', '2024-05-16', '2024-04-27', '2024-04-22'])
 st.caption('''
 セッションの日本語検索アプリ。  
 時点データなので、実際のセッション時間等はリンク先を確認してください。説明文はダブルクリックで全文表示できます。
@@ -40,6 +42,9 @@ if en_toggle:
             right( '00' || hour_from || '時', 3) as hour_from,
             description,
             session_id,
+            case Recorded
+            when 'Video/Audio/Slides' then 'Slides/audio/video'
+            else Recorded end as Recorded,
             url
         from df
         order by date, time_from, session_tracks_ja
@@ -60,6 +65,9 @@ else:
             right( '00' || hour_from || '時', 3) as hour_from,
             description_ja as description,
             session_id,
+            case Recorded
+            when 'Video/Audio/Slides' then 'Slides/audio/video'
+            when 'No' then 'なし' else Recorded end as Recorded,
             url
         from df
         order by date, time_from, session_tracks_ja
@@ -87,6 +95,10 @@ select_session_type = st.sidebar.selectbox(
     'セッション種別',
     np.insert(df['session_type'].sort_values().unique(), 0, 'すべて'),
 )
+select_recorded = st.sidebar.selectbox(
+    '録画有無',
+    np.insert(df['Recorded'].sort_values().unique(), 0, 'すべて'),
+)
 input_search = st.sidebar.text_input(
     '検索',
     placeholder='Like',
@@ -102,6 +114,8 @@ if select_session_type != 'すべて':
     df = df[df["session_type"] == select_session_type]
 if select_hour != 'すべて':
     df = df[df["hour_from"] == select_hour]
+if select_recorded != 'すべて':
+    df = df[df["Recorded"] == select_recorded]
 if input_search != '':
     cond_code = df["code"].str.contains(input_search, case=False)
     cond_title = df["title"].str.contains(input_search, case=False)
@@ -118,7 +132,7 @@ st.sidebar.markdown(f'''
 ### {df.shape[0]}件
 ''')
 
-df_display = df[['code', 'title', 'session_type', 'session_tracks', 'date', 'time_from', 'time_to', 'description', 'url']]
+df_display = df[['code', 'title', 'session_type', 'session_tracks', 'date', 'time_from', 'time_to', 'description', 'Recorded', 'url']]
 st.dataframe(df_display,
             column_config={
                 "code": st.column_config.Column(
@@ -151,6 +165,9 @@ st.dataframe(df_display,
                 "url": st.column_config.LinkColumn(
                     "リンク",
                     display_text="❄️",
+                ),
+                "Recorded": st.column_config.Column(
+                    "録画有無",
                 ),
             },
              height=700,
