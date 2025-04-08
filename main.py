@@ -79,8 +79,7 @@ st.sidebar.markdown('''
 ## 検索条件
 プルダウン内に直接入力もできます。  
 ''')
-st.sidebar.warning('''※2025版は分類や種別正常動作しないので、参考程度。  
-                   Like検索は動きます。''')
+st.sidebar.warning('''分類や種別は未整備なので、参考程度。今後整備します。''')
 select_session_tracks = st.sidebar.selectbox(
     '分類',
     np.insert(df['session_tracks'].sort_values().unique(), 0, 'すべて'),
