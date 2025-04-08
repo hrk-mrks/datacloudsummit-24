@@ -4,18 +4,18 @@ import numpy as np
 import duckdb
 
 st.set_page_config(
-    page_title="Data Cloud Summit 2024",
+    page_title="Snowflake Summit 2025",
     page_icon="❄",
     layout="wide",
     initial_sidebar_state="auto",
 )
 
-'Data Cloud Summit 24'
+'Snowflake Summit 25'
 col1, col2 = st.columns([4,1])
 with col1:
     '### セッション検索アプリ❄️'
 with col2:
-    data_date = '2024-06-04'
+    data_date = '2025-04-08'
     st.write(f'データ更新日：{data_date}')
     # data_date = st.selectbox('データ更新時点',
     #              ['2024-05-29', '2024-05-16', '2024-04-27', '2024-04-22'])
@@ -42,9 +42,9 @@ if en_toggle:
             right( '00' || hour_from || '時', 3) as hour_from,
             description,
             session_id,
-            case Recorded
-            when 'Video/Audio/Slides' then 'Slides/audio/video'
-            else Recorded end as Recorded,
+            -- case Recorded
+            -- when 'Video/Audio/Slides' then 'Slides/audio/video'
+            -- else Recorded end as Recorded,
             url
         from df
         order by date, time_from, session_tracks_ja
@@ -65,9 +65,9 @@ else:
             right( '00' || hour_from || '時', 3) as hour_from,
             description_ja as description,
             session_id,
-            case Recorded
-            when 'Video/Audio/Slides' then 'Slides/audio/video'
-            when 'No' then 'なし' else Recorded end as Recorded,
+            -- case Recorded
+            -- when 'Video/Audio/Slides' then 'Slides/audio/video'
+            -- when 'No' then 'なし' else Recorded end as Recorded,
             url
         from df
         order by date, time_from, session_tracks_ja
@@ -77,28 +77,30 @@ else:
 
 st.sidebar.markdown('''
 ## 検索条件
-プルダウン内に直接入力もできます。
+プルダウン内に直接入力もできます。  
 ''')
+st.sidebar.warning('''※2025版は分類や種別正常動作しないので、参考程度。  
+                   Like検索は動きます。''')
 select_session_tracks = st.sidebar.selectbox(
     '分類',
     np.insert(df['session_tracks'].sort_values().unique(), 0, 'すべて'),
 )
-select_date = st.sidebar.selectbox(
-    '日付',
-    np.insert(df['date'].sort_values().unique(), 0, 'すべて'),
-)
-select_hour = st.sidebar.selectbox(
-    '開始時間帯',
-    np.insert(df['hour_from'].sort_values().unique(), 0, 'すべて'),
-)
+# select_date = st.sidebar.selectbox(
+#     '日付',
+#     np.insert(df['date'].sort_values().unique(), 0, 'すべて'),
+# )
+# select_hour = st.sidebar.selectbox(
+#     '開始時間帯',
+#     np.insert(df['hour_from'].sort_values().unique(), 0, 'すべて'),
+# )
 select_session_type = st.sidebar.selectbox(
     'セッション種別',
     np.insert(df['session_type'].sort_values().unique(), 0, 'すべて'),
 )
-select_recorded = st.sidebar.selectbox(
-    '録画有無',
-    np.insert(df['Recorded'].sort_values().unique(), 0, 'すべて'),
-)
+# select_recorded = st.sidebar.selectbox(
+#     '録画有無',
+#     np.insert(df['Recorded'].sort_values().unique(), 0, 'すべて'),
+# )
 input_search = st.sidebar.text_input(
     '検索',
     placeholder='Like',
@@ -108,22 +110,22 @@ input_search = st.sidebar.text_input(
 
 if select_session_tracks != 'すべて':
     df = df[df["session_tracks"] == select_session_tracks]
-if select_date != 'すべて':
-    df = df[df["date"] == select_date]
+# if select_date != 'すべて':
+#     df = df[df["date"] == select_date]
 if select_session_type != 'すべて':
     df = df[df["session_type"] == select_session_type]
-if select_hour != 'すべて':
-    df = df[df["hour_from"] == select_hour]
-if select_recorded != 'すべて':
-    df = df[df["Recorded"] == select_recorded]
+# if select_hour != 'すべて':
+#     df = df[df["hour_from"] == select_hour]
+# if select_recorded != 'すべて':
+#     df = df[df["Recorded"] == select_recorded]
 if input_search != '':
     cond_code = df["code"].str.contains(input_search, case=False)
     cond_title = df["title"].str.contains(input_search, case=False)
     cond_session_type = df["session_type"].str.contains(input_search, case=False)
     cond_session_tracks = df["session_tracks"].str.contains(input_search, case=False)
-    cond_date = df["date"].str.contains(input_search, case=False)
+    # cond_date = df["date"].str.contains(input_search, case=False)
     cond_description = df["description"].str.contains(input_search, case=False)
-    cond = cond_code | cond_title | cond_session_type | cond_session_tracks | cond_date | cond_description
+    cond = cond_code | cond_title | cond_session_type | cond_session_tracks  | cond_description
     df = df[cond]
 
 st.sidebar.markdown(f'''
@@ -132,7 +134,7 @@ st.sidebar.markdown(f'''
 ### {df.shape[0]}件
 ''')
 
-df_display = df[['code', 'title', 'session_type', 'session_tracks', 'date', 'time_from', 'time_to', 'description', 'Recorded', 'url']]
+df_display = df[['code', 'title', 'session_type', 'session_tracks', 'date', 'time_from', 'time_to', 'description', 'url']]
 st.dataframe(df_display,
             column_config={
                 "code": st.column_config.Column(
@@ -166,9 +168,9 @@ st.dataframe(df_display,
                     "リンク",
                     display_text="❄️",
                 ),
-                "Recorded": st.column_config.Column(
-                    "録画有無",
-                ),
+                # "Recorded": st.column_config.Column(
+                #     "録画有無",
+                # ),
             },
              height=700,
              hide_index=True,
