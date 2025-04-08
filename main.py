@@ -20,8 +20,9 @@ with col2:
     # data_date = st.selectbox('データ更新時点',
     #              ['2024-05-29', '2024-05-16', '2024-04-27', '2024-04-22'])
 st.caption('''
-セッションの日本語検索アプリ。  
-時点データなので、実際のセッション時間等はリンク先を確認してください。説明文はダブルクリックで全文表示できます。
+セッションの日本語検索アプリ。(機械翻訳)  
+時点データなので、実際のセッション時間等はリンク先を確認してください。説明文はダブルクリックで全文表示できます。  
+元ネタ：https://reg.summit.snowflake.com/flow/snowflake/summit25/sessions/page/catalog/
 ''')
 
 df = pd.read_csv(fr'./data/{data_date}_data_cloud_summit.csv')
